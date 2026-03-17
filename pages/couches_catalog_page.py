@@ -245,3 +245,65 @@ class CouchesCatalogPage(BasePage):
         except Exception as exc:
             logger.warning("Product link not found for '%s': %s", product_name, exc)
             return None
+
+    def get_first_product_name(self) -> str | None:
+        """
+        Return the name of the first product card visible in the catalog.
+
+        Returns:
+            Product name string, or None if no cards are found.
+        """
+        try:
+            el = self.page.locator(self.PRODUCT_NAME_LINK).first
+            el.wait_for(timeout=10_000)
+            return el.text_content().strip()
+        except Exception:
+            return None
+
+    def click_favorite_icon(self, product_name: str) -> None:
+        """
+        Click the favorite (wishlist) icon on the card for the named product.
+
+        Args:
+            product_name: Partial or full product name to locate the card.
+        """
+        locator = self.page.locator(
+            f"xpath=//div[contains(@class,'product-card__name')]"
+            f"//a[contains(., '{product_name}')]"
+            f"/ancestor::div[contains(@class,'product-card')]"
+            f"//div[contains(@class,'product-card__favorites')]"
+            f"//a[contains(@class,'favorite-icon')]"
+        )
+        locator.first.wait_for(timeout=10_000)
+        locator.first.click()
+        logger.info("Favorite icon clicked for '%s'", product_name)
+
+    def is_favorite_icon_active(self, product_name: str) -> bool:
+        """
+        Return True if the favorite icon on the named product's card has the
+        'active' CSS class, indicating the product is in the favorites list.
+
+        Args:
+            product_name: Partial or full product name.
+        """
+        locator = self.page.locator(
+            f"xpath=//div[contains(@class,'product-card__name')]"
+            f"//a[contains(., '{product_name}')]"
+            f"/ancestor::div[contains(@class,'product-card')]"
+            f"//a[contains(@class,'favorite-icon') and contains(@class,'active')]"
+        )
+        try:
+            locator.first.wait_for(timeout=5_000)
+            return True
+        except Exception:
+            return False
+
+    def navigate_to_favorites(self) -> None:
+        """
+        Click the favorites icon in the main desktop header to open
+        the favorites page.
+        """
+        locator = self.page.locator(".header-laptop__favorite a.favorite-informer")
+        locator.wait_for(state="visible", timeout=10_000)
+        locator.click()
+        logger.info("Navigated to favorites via desktop header link")
