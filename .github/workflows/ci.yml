@@ -12,9 +12,6 @@ permissions:
 jobs:
   test:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        browser: [chrome]
 
     steps:
       # Checkout
@@ -32,10 +29,8 @@ jobs:
         run: pip install -r requirements.txt
 
       # Browser
-      - name: Set up Chrome
-        uses: browser-actions/setup-chrome@v1
-        with:
-          chrome-version: stable
+      - name: Install Playwright browsers
+        run: playwright install --with-deps chromium
 
       # Tests
       - name: Run tests (${{ matrix.browser }})
