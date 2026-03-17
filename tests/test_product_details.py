@@ -84,12 +84,9 @@ def test_product_details_match_catalog_card(page):
         catalog_width = catalog_dims[DIMENSION_WIDTH_KEY]
         catalog_depth = catalog_dims[DIMENSION_DEPTH_KEY]
 
-    # Navigate to the product detail page
-    with allure.step(f"Step 4: Open '{TARGET_PRODUCT_NAME}' product detail page"):
-        product_url = catalog.get_product_link_by_name(TARGET_PRODUCT_NAME)
-        assert product_url, f"Could not resolve product URL for '{TARGET_PRODUCT_NAME}'"
-
-        catalog.open(product_url)
+    # Click the product title to open the detail page
+    with allure.step(f"Step 4: Click '{TARGET_PRODUCT_NAME}' title to open its detail page"):
+        catalog.click_product_link(TARGET_PRODUCT_NAME)
         assert product.is_product_page(), "Product detail page did not load"
 
         page_title = product.get_product_title()

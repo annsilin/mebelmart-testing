@@ -221,30 +221,30 @@ class CouchesCatalogPage(BasePage):
             logger.warning("Could not read catalog card dimensions for '%s': %s", product_name, exc)
             return {}
 
-    def get_product_link_by_name(self, product_name: str) -> str | None:
-        """
-        Return the href of the product detail link for the named catalog card.
-
-        Args:
-            product_name: Partial or full product name.
-
-        Returns:
-            Absolute URL string, or None if not found.
-        """
-        locator = self.page.locator(
-            f"xpath=//div[contains(@class,'product-card__name')]"
-            f"//a[contains(., '{product_name}')]"
-        )
-        try:
-            locator.first.wait_for(timeout=10_000)
-            href = locator.first.get_attribute("href")
-            if href and href.startswith("/"):
-                from config.config import BASE_URL
-                href = BASE_URL + href
-            return href
-        except Exception as exc:
-            logger.warning("Product link not found for '%s': %s", product_name, exc)
-            return None
+    # def get_product_link_by_name(self, product_name: str) -> str | None:
+    #     """
+    #     Return the href of the product detail link for the named catalog card.
+    #
+    #     Args:
+    #         product_name: Partial or full product name.
+    #
+    #     Returns:
+    #         Absolute URL string, or None if not found.
+    #     """
+    #     locator = self.page.locator(
+    #         f"xpath=//div[contains(@class,'product-card__name')]"
+    #         f"//a[contains(., '{product_name}')]"
+    #     )
+    #     try:
+    #         locator.first.wait_for(timeout=10_000)
+    #         href = locator.first.get_attribute("href")
+    #         if href and href.startswith("/"):
+    #             from config.config import BASE_URL
+    #             href = BASE_URL + href
+    #         return href
+    #     except Exception as exc:
+    #         logger.warning("Product link not found for '%s': %s", product_name, exc)
+    #         return None
 
     def get_first_product_name(self) -> str | None:
         """
@@ -307,3 +307,18 @@ class CouchesCatalogPage(BasePage):
         locator.wait_for(state="visible", timeout=10_000)
         locator.click()
         logger.info("Navigated to favorites via desktop header link")
+
+    def click_product_link(self, product_name: str) -> None:
+        """
+        Click the product title link on the catalog card to open its detail page.
+
+        Args:
+            product_name: Partial or full product name to locate the card.
+        """
+        locator = self.page.locator(
+            f"xpath=//div[contains(@class,'product-card__name')]"
+            f"//a[contains(., '{product_name}')]"
+        )
+        locator.first.wait_for(timeout=10_000)
+        locator.first.click()
+        logger.info("Clicked product link for '%s'", product_name)
