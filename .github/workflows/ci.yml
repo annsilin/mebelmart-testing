@@ -79,9 +79,10 @@ jobs:
           allure_history: allure-history
 
       - name: Deploy Allure Report to GitHub Pages
-        if: github.ref == 'refs/heads/main' && always()
+        if: github.ref == 'refs/heads/main' && matrix.browser == 'chromium' && always()
         uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_branch: gh-pages
           publish_dir: allure-report
+          force_orphan: true
