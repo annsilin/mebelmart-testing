@@ -22,7 +22,7 @@ import logging
 import allure
 import pytest
 
-from config.config import COUCHES_URL
+# from config.config import COUCHES_URL
 from pages.couches_catalog_page import CouchesCatalogPage
 
 logger = logging.getLogger(__name__)
@@ -35,20 +35,20 @@ TARGET_PRODUCT_NAME = "Лотос"
 TARGET_PRODUCT_PRICE = 12_405
 
 
-def _build_filter_url(price_from: int, price_to: int) -> str:
-    """
-    Build a catalog URL with price filter query parameters.
-
-    The site expects the format: ?filterRange=&price=MIN-MAX
-
-    Args:
-        price_from: Lower bound of the price range in RUB.
-        price_to:   Upper bound of the price range in RUB.
-
-    Returns:
-        Full URL string with filter parameters applied.
-    """
-    return f"{COUCHES_URL}?filterRange=&price={price_from}-{price_to}"
+# def _build_filter_url(price_from: int, price_to: int) -> str:
+#     """
+#     Build a catalog URL with price filter query parameters.
+#
+#     The site expects the format: ?filterRange=&price=MIN-MAX
+#
+#     Args:
+#         price_from: Lower bound of the price range in RUB.
+#         price_to:   Upper bound of the price range in RUB.
+#
+#     Returns:
+#         Full URL string with filter parameters applied.
+#     """
+#     return f"{COUCHES_URL}?filterRange=&price={price_from}-{price_to}"
 
 
 @allure.feature("Filtering")
@@ -77,20 +77,26 @@ def test_price_filter_and_product_presence(page):
         assert catalog.is_catalog_loaded(), "Couches catalog page did not load"
         logger.info("Catalog loaded: %s", catalog.current_url)
 
-    # Apply the price filter
-    with allure.step(f"Steps 2-3: Apply price filter {PRICE_FROM:,}-{PRICE_TO:,} RUB"):
-        filter_url = _build_filter_url(PRICE_FROM, PRICE_TO)
+    # Expand the price filter section
+    with allure.step("Step 2: Click 'Цена' to open the price filter"):
+        catalog.open_price_filter()
+
+    # Set the slider range
+    with allure.step(f"Step 3: Set price slider to {PRICE_FROM:,}–{PRICE_TO:,} RUB"):
+        catalog.set_price_filter(PRICE_FROM, PRICE_TO)
+
+    # Apply the filter
+    with allure.step("Step 4: Click 'Применить фильтр'"):
+        catalog.apply_filter()
         allure.attach(
-            filter_url,
-            name="Filter URL",
+            catalog.current_url,
+            name="URL after filter applied",
             attachment_type=allure.attachment_type.TEXT,
         )
-        catalog.open(filter_url)
-        catalog._wait_for_products()
-        logger.info("Filter applied: %s", filter_url)
+        logger.info("Filter applied, current URL: %s", catalog.current_url)
 
     # Find the target product in the results
-    with allure.step(f"Step 4: Find '{TARGET_PRODUCT_NAME}' couch in filtered results"):
+    with allure.step(f"Step 5: Find '{TARGET_PRODUCT_NAME}' couch in filtered results"):
         product = catalog.find_product_by_name(TARGET_PRODUCT_NAME)
 
         if product is None:
@@ -109,7 +115,7 @@ def test_price_filter_and_product_presence(page):
 
     # Assert the product price is within the filter range
     with allure.step(
-            f"Step 5: Assert price is within {PRICE_FROM:,}-{PRICE_TO:,} RUB"
+            f"Step 6: Assert price is within {PRICE_FROM:,}-{PRICE_TO:,} RUB"
     ):
         actual_price = catalog.get_product_price_by_name(TARGET_PRODUCT_NAME)
 

@@ -25,7 +25,10 @@ class CouchesCatalogPage(BasePage):
 
     # Filter
     FILTER_BLOCK = "#filterContainer"
-    FILTER_APPLY_BTN = "#filterLinkContainer"
+    FILTER_PRICE_TITLE = "xpath=//a[text()='Цена']"
+    FILTER_PRICE_SLIDER_INPUT = "#w0"
+    FILTER_PRICE_SLIDER = "#w0-slider"
+    FILTER_APPLY_BTN = "xpath=//div[contains(text(),'Применить фильтр')]"
 
     # Product cards
     PRODUCT_CARD = ".product-card"
@@ -56,6 +59,41 @@ class CouchesCatalogPage(BasePage):
         self.open(self.URL)
         self._wait_for_products()
         logger.info("Couches catalog loaded: %s", self.current_url)
+        return self
+
+    @allure.step("Open price filter")
+    def open_price_filter(self) -> "CouchesCatalogPage":
+        """
+        Click the 'Цена' title to expand the price filter section
+        and wait for the slider widget to initialize.
+        """
+        self.page.locator(self.FILTER_PRICE_TITLE).click()
+        self.page.wait_for_selector(self.FILTER_PRICE_SLIDER, timeout=10_000)
+        logger.info("Price filter opened")
+        return self
+
+    @allure.step("Set price range: {price_from} – {price_to} RUB")
+    def set_price_filter(self, price_from: int, price_to: int) -> "CouchesCatalogPage":
+        """
+        Set the price slider range using the bootstrap-slider jQuery API.
+
+        Args:
+            price_from: Lower price bound in RUB.
+            price_to:   Upper price bound in RUB.
+        """
+        self.page.evaluate(
+            "([min, max]) => { $('#w0').slider('setValue', [Number(min), Number(max)], true, true); }",
+            [price_from, price_to],
+        )
+        logger.info("Price slider set: %d – %d RUB", price_from, price_to)
+        return self
+
+    @allure.step("Apply filter")
+    def apply_filter(self) -> "CouchesCatalogPage":
+        """Click the 'Применить фильтр' button and wait for the results to reload."""
+        self.page.locator(self.FILTER_APPLY_BTN).click()
+        self._wait_for_products()
+        logger.info("Filter applied, waiting for results")
         return self
 
     # Data accessors
