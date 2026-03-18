@@ -116,3 +116,81 @@ class ProductPage(BasePage):
             if key.lower().startswith(name_lower):
                 return value
         return None
+
+    ADD_TO_CART_BTN = "a.btnToCart"
+    SELECT_BTN = ".select-block .select__btn"
+    OPTION_LIST_ITEM = ".select-block .select .optionList .optionList__item"
+
+    def select_first_available_options(self) -> None:
+        """
+        Select the first option in every product configurator dropdown.
+        If no configurator dropdowns are present the method exits silently.
+        """
+        select_btns = self.page.locator(self.SELECT_BTN).all()
+        if not select_btns:
+            logger.debug("No option dropdowns found - skipping option selection")
+            return
+
+        logger.info("Selecting first option in %d dropdown(s)", len(select_btns))
+        # The optionList items are hidden by CSS until the dropdown is opened.
+        # We use JS to click them directly, bypassing Playwright's visibility check.
+        self.page.evaluate("""
+                           () => {
+                               document.querySelectorAll('.select-block .select').forEach(select => {
+                                   const firstItem = select.querySelector('.optionList .optionList__item');
+                                   if (firstItem) {
+                                       firstItem.click();
+                                   }
+                               });
+                           }
+                           """)
+        self.page.wait_for_timeout(500)
+        logger.info("Options selected via JS")
+
+    @allure.step("Click 'В корзину' button")
+    def click_add_to_cart(self) -> None:
+        """Click the 'В корзину' button on the product detail page."""
+        # Select all required product options first (color, etc.)
+        # Some products will not add to cart without explicit option selection.
+        self.select_first_available_options()
+
+        # Use .first - the page has a second hidden .btnToCart inside the
+        # quick-order modal, which causes a strict mode violation otherwise.
+        btn = self.page.locator(self.ADD_TO_CART_BTN).first
+        btn.wait_for(state="visible", timeout=10_000)
+        btn.scroll_into_view_if_needed()
+        self.page.wait_for_timeout(500)
+
+        # Dismiss an alert that pops up after adding an item to the cart
+        def _dismiss_dialog(dialog):
+            logger.info("Dialog appeared: '%s' - dismissing", dialog.message)
+            dialog.dismiss()
+
+        self.page.once("dialog", _dismiss_dialog)
+
+        btn.dispatch_event("click")
+
+        # Wait for the AJAX add-to-cart request to finish
+        self.page.wait_for_timeout(2000)
+        logger.info("'В корзину' complete")
+
+    def get_product_price_from_page(self) -> int | None:
+        """
+        Read the current price from the product detail page.
+
+        Returns:
+            Integer price in RUB, or None if not found.
+        """
+        locator = self.page.locator(
+            "xpath=//div[contains(@class,'product-card__now_price')]"
+            "//b[not(ancestor::div[contains(@class,'product-card__old_price')])"
+            "  and normalize-space(.)!='' and normalize-space(.)!='₽'][1]"
+        )
+        try:
+            locator.wait_for(timeout=10_000)
+            raw = locator.text_content().strip()
+            digits = "".join(c for c in raw if c.isdigit())
+            return int(digits) if digits else None
+        except Exception as exc:
+            logger.warning("Product page price not found: %s", exc)
+            return None
