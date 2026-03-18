@@ -147,31 +147,43 @@ class ProductPage(BasePage):
         self.page.wait_for_timeout(500)
         logger.info("Options selected via JS")
 
+    @allure.step("Wait for product page to fully load")
+    def wait_for_page_ready(self) -> None:
+        """Wait for the product page to be fully loaded and interactive."""
+        self.page.wait_for_load_state("load")
+        self.page.locator(self.ADD_TO_CART_BTN).first.wait_for(
+            state="visible", timeout=15_000
+        )
+        logger.info("Product page fully loaded and interactive")
+
     @allure.step("Click 'В корзину' button")
     def click_add_to_cart(self) -> None:
         """Click the 'В корзину' button on the product detail page."""
+
+        self.wait_for_page_ready()
+
         # Select all required product options first (color, etc.)
-        # Some products will not add to cart without explicit option selection.
         self.select_first_available_options()
 
         # Use .first - the page has a second hidden .btnToCart inside the
         # quick-order modal, which causes a strict mode violation otherwise.
         btn = self.page.locator(self.ADD_TO_CART_BTN).first
-        btn.wait_for(state="visible", timeout=10_000)
         btn.scroll_into_view_if_needed()
-        self.page.wait_for_timeout(500)
 
-        # Dismiss an alert that pops up after adding an item to the cart
-        def _dismiss_dialog(dialog):
-            logger.info("Dialog appeared: '%s' - dismissing", dialog.message)
-            dialog.dismiss()
-
-        self.page.once("dialog", _dismiss_dialog)
-
+        # Wait for the button to be fully enabled before clicking
+        btn.wait_for(state="visible", timeout=10_000)
         btn.dispatch_event("click")
 
-        # Wait for the AJAX add-to-cart request to finish
-        self.page.wait_for_timeout(2000)
+        # Wait for the AJAX add-to-cart request to complete.
+        try:
+            self.page.wait_for_function(
+                "() => document.querySelector('.cart-counter b') !== null"
+                " && document.querySelector('.cart-counter b').textContent.trim() !== ''",
+                timeout=8_000,
+            )
+        except Exception:
+            self.page.wait_for_timeout(2000)
+
         logger.info("'В корзину' complete")
 
     def get_product_price_from_page(self) -> int | None:
