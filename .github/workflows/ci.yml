@@ -44,7 +44,6 @@ jobs:
         run: |
           pytest \
             --browser=${{ matrix.browser }} \
-            --headless=true \
             --alluredir=allure-results \
             -v \
             --tb=short
