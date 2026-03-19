@@ -1,0 +1,105 @@
+// Jenkinsfile
+pipeline {
+
+    agent any
+
+    // ── Schedule + parameters ───────────────────────────────────────────────
+    triggers {
+        // Run every weekday at 09:00
+        cron('H 9 * * 1-5')
+    }
+
+    parameters {
+        choice(
+            name: 'BROWSER',
+            choices: ['chromium', 'firefox'],
+            description: 'Browser to run tests in'
+        )
+        choice(
+            name: 'HEADLESS',
+            choices: ['true', 'false'],
+            description: 'true = headless CI run | false = headed demo (visible via noVNC)'
+        )
+        string(
+            name: 'PYTEST_ARGS',
+            defaultValue: '',
+            description: 'Extra pytest arguments, e.g. -k test_price_filter'
+        )
+    }
+
+    // ── Environment ─────────────────────────────────────────────────────────
+    environment {
+        COMPOSE_FILE       = 'docker-setup/docker-compose.yml'
+        ALLURE_RESULTS_DIR = 'allure-results'
+    }
+
+    options {
+        timestamps()
+        ansiColor('xterm')
+        timeout(time: 30, unit: 'MINUTES')
+        buildDiscarder(logRotator(numToKeepStr: '20'))
+    }
+
+    // ── Stages ──────────────────────────────────────────────────────────────
+    stages {
+
+        stage('Checkout') {
+            steps {
+                echo "Checking out repository..."
+                checkout scm
+            }
+        }
+
+        stage('Run Tests') {
+            steps {
+                echo "Starting test run: browser=${params.BROWSER}, headless=${params.HEADLESS}"
+
+                sh """
+                    docker compose -f ${COMPOSE_FILE} run --rm \
+                        -e BROWSER=${params.BROWSER} \
+                        -e HEADLESS=${params.HEADLESS} \
+                        tests \
+                        --alluredir=${ALLURE_RESULTS_DIR} \
+                        -v --tb=short \
+                        ${params.PYTEST_ARGS}
+                """
+            }
+
+            // Always collect results even if tests fail
+            post {
+                always {
+                    echo "Collecting Allure results..."
+                    // Copy results to shared volume picked up by Allure server
+                    sh """
+                        docker compose -f ${COMPOSE_FILE} run --rm \
+                            --entrypoint cp \
+                            tests \
+                            -r ${ALLURE_RESULTS_DIR}/. /app/allure-results/
+                    """
+                }
+            }
+        }
+
+        stage('Publish Allure Report') {
+            steps {
+                // Notify the Allure Docker service to regenerate the report
+                sh """
+                    curl -X GET \
+                        "http://allure:5050/allure-docker-service/generate-report" \
+                        --fail --silent --show-error || true
+                """
+                echo "Allure report updated: http://localhost:5050"
+            }
+        }
+    }
+
+    // ── Post ────────────────────────────────────────────────────────────────
+    post {
+        always {
+            echo "Pipeline complete. Status: ${currentBuild.currentResult}"
+        }
+        failure {
+            echo "Tests failed! Check Allure report for screenshots."
+        }
+    }
+}

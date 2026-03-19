@@ -1,0 +1,83 @@
+# ─────────────────────────────────────────────────────────────────────────────
+# Mebelmart Test Infrastructure
+#
+# Services:
+#   jenkins      - CI/CD, scheduled test runs (port 8080)
+#   tests        - Playwright test runner (headless + headed)
+#   allure       - Allure report server (port 5050)
+#
+# Usage:
+#   docker compose up -d          # start all services
+#   docker compose logs -f        # watch logs
+#   docker compose down           # stop all
+# ─────────────────────────────────────────────────────────────────────────────
+
+services:
+
+  # ── Jenkins ─────────────────────────────────────────────────────────────────
+  jenkins:
+    build:
+      context: ./jenkins
+      dockerfile: Dockerfile
+    container_name: mebelmart-jenkins
+    ports:
+      - "8080:8080"
+      - "50000:50000"
+    volumes:
+      - jenkins_home:/var/jenkins_home
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ../:/workspace:ro
+    environment:
+      - JAVA_OPTS=-Djenkins.install.runSetupWizard=false
+      # Real path on the Windows host — used by pipeline when running docker run.
+      # Docker mounts volumes using host paths, not paths inside Jenkins container.
+      - HOST_WORKSPACE=C:/Users/Ann/PycharmProjects/mebelmart-testing
+    restart: unless-stopped
+    networks:
+      - mebelmart
+
+  # ── Playwright test runner ───────────────────────────────────────────────────
+  tests:
+    build:
+      context: ./tests
+      dockerfile: Dockerfile
+    container_name: mebelmart-tests
+    volumes:
+      - ../:/app                                  # project root
+      - allure_results:/app/allure-results        # share results with Allure
+    environment:
+      - BROWSER=chromium
+      - HEADLESS=true
+      - DISPLAY=:99                               # Xvfb display for headed mode
+    networks:
+      - mebelmart
+    profiles:
+      - run                                       # only starts when explicitly requested
+
+  # ── Allure report server ─────────────────────────────────────────────────────
+  allure:
+    image: frankescobar/allure-docker-service:latest
+    container_name: mebelmart-allure
+    ports:
+      - "5050:5050"
+    volumes:
+      - mebelmart_allure_results:/app/allure-results
+      - allure_reports:/app/default-reports
+    environment:
+      CHECK_RESULTS_EVERY_SECONDS: 10
+      KEEP_HISTORY: 20
+    restart: unless-stopped
+    networks:
+      - mebelmart
+
+volumes:
+  jenkins_home:
+  allure_reports:
+  # Declared as external so docker-compose uses the existing volume
+  # created by the test runner (mebelmart_allure_results)
+  mebelmart_allure_results:
+    external: true
+
+networks:
+  mebelmart:
+    driver: bridge
