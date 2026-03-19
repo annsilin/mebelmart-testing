@@ -70,3 +70,12 @@ class BasePage:
     def scroll_to_bottom(self) -> None:
         """Scroll the page to the very bottom."""
         self.page.evaluate("window.scrollTo(0, document.body.scrollHeight)")
+
+    def scroll_to_center(self, locator) -> None:
+        """Scroll the page so the element is centred in the viewport."""
+        try:
+            locator.first.evaluate(
+                "el => el.scrollIntoView({ behavior: 'smooth', block: 'center' })"
+            )
+        except Exception as exc:
+            logger.debug("scroll_to_center() skipped: %s", exc)

@@ -67,7 +67,9 @@ class CouchesCatalogPage(BasePage):
         Click the 'Цена' title to expand the price filter section
         and wait for the slider widget to initialize.
         """
-        self.page.locator(self.FILTER_PRICE_TITLE).click()
+        title = self.page.locator(self.FILTER_PRICE_TITLE)
+        self.scroll_to_center(title)
+        title.click()
         self.page.wait_for_selector(self.FILTER_PRICE_SLIDER, timeout=10_000)
         logger.info("Price filter opened")
         return self
@@ -91,7 +93,9 @@ class CouchesCatalogPage(BasePage):
     @allure.step("Apply filter")
     def apply_filter(self) -> "CouchesCatalogPage":
         """Click the 'Применить фильтр' button and wait for the results to reload."""
-        self.page.locator(self.FILTER_APPLY_BTN).click()
+        btn = self.page.locator(self.FILTER_APPLY_BTN)
+        self.scroll_to_center(btn)
+        btn.click()
         self._wait_for_products()
         logger.info("Filter applied, waiting for results")
         return self
@@ -313,6 +317,7 @@ class CouchesCatalogPage(BasePage):
             f"//a[contains(@class,'favorite-icon')]"
         )
         locator.first.wait_for(timeout=10_000)
+        self.scroll_to_center(locator)
         locator.first.click()
         logger.info("Favorite icon clicked for '%s'", product_name)
 
@@ -343,6 +348,7 @@ class CouchesCatalogPage(BasePage):
         """
         locator = self.page.locator(".header-laptop__favorite a.favorite-informer")
         locator.wait_for(state="visible", timeout=10_000)
+        self.scroll_to_center(locator)
         locator.click()
         logger.info("Navigated to favorites via desktop header link")
 
@@ -358,5 +364,6 @@ class CouchesCatalogPage(BasePage):
             f"//a[contains(., '{product_name}')]"
         )
         locator.first.wait_for(timeout=10_000)
+        self.scroll_to_center(locator)
         locator.first.click()
         logger.info("Clicked product link for '%s'", product_name)
