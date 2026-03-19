@@ -1,0 +1,9 @@
+19:27:36  INFO      pages.base_page - Navigating to: https://mebelmart-saratov.ru/myagkaya_mebel_v_saratove/divanyi_v_saratove
+19:27:43  INFO      pages.couches_catalog_page - Couches catalog loaded: https://mebelmart-saratov.ru/myagkaya_mebel_v_saratove/divanyi_v_saratove
+19:27:43  INFO      tests.test_price_filter - Catalog loaded: https://mebelmart-saratov.ru/myagkaya_mebel_v_saratove/divanyi_v_saratove
+19:27:44  INFO      pages.couches_catalog_page - Price filter opened
+19:27:46  INFO      pages.couches_catalog_page - Price slider set: 10000 – 15000 RUB
+19:27:46  INFO      pages.couches_catalog_page - Filter applied, waiting for results
+19:27:46  INFO      tests.test_price_filter - Filter applied, current URL: https://mebelmart-saratov.ru/myagkaya_mebel_v_saratove/divanyi_v_saratove#
+19:27:46  INFO      tests.test_price_filter - 'Лотос' couch found in results
+19:27:46  INFO      tests.test_price_filter - 'Лотос' price: 12405 RUB (expected within 10000-15000)

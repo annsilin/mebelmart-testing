@@ -1,0 +1,9 @@
+INFO     pages.base_page:base_page.py:32 Navigating to: https://mebelmart-saratov.ru/myagkaya_mebel_v_saratove/divanyi_v_saratove
+INFO     pages.couches_catalog_page:couches_catalog_page.py:61 Couches catalog loaded: https://mebelmart-saratov.ru/myagkaya_mebel_v_saratove/divanyi_v_saratove
+INFO     tests.test_product_details:test_product_details.py:56 Catalog loaded: https://mebelmart-saratov.ru/myagkaya_mebel_v_saratove/divanyi_v_saratove
+INFO     tests.test_product_details:test_product_details.py:65 Product 'Шенилл' found in catalog
+INFO     tests.test_product_details:test_product_details.py:75 Catalog card dimensions: {'Ширина': '2100', 'Глубина': '800'}
+INFO     pages.couches_catalog_page:couches_catalog_page.py:346 Clicked product link for 'Шенилл'
+INFO     tests.test_product_details:test_product_details.py:98 Product page opened: 'Диван-книжка шенилл (В-д)'
+INFO     tests.test_product_details:test_product_details.py:119 Characteristics tab - width: 2100, depth: 800
+INFO     tests.test_product_details:test_product_details.py:152 Dimensions match - width: 2100 мм, depth: 800 мм

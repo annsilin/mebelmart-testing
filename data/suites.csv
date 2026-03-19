@@ -1,0 +1,51 @@
+"DESCRIPTION","DURATION IN MS","NAME","PARENT SUITE","START TIME","STATUS","STOP TIME","SUB SUITE","SUITE","TEST CLASS","TEST METHOD"
+"
+    Scenario 2.2: Verify that dimensions shown in the catalog card
+    are consistent with the Characteristics tab on the product detail page.
+    ","14282","Scenario 2.2: 'Шенилл' catalog card dimensions match the Characteristics tab on the product page","tests","Thu Mar 19 19:28:08 UTC 2026","passed","Thu Mar 19 19:28:22 UTC 2026","","test_product_details","",""
+"Scenario 2.4: Product search by name.","7261","Scenario 2.4: Search for 'Чебурашка' - first result contains the search term","tests","Thu Mar 19 19:28:22 UTC 2026","passed","Thu Mar 19 19:28:29 UTC 2026","","test_search","",""
+"
+    Scenario 2.1: Price filter + specific product presence check.
+
+    Verifies the end-to-end filtering flow:
+        - catalog loads successfully
+        - price filter narrows the results
+        - a known product that matches the filter is visible
+        - the product's displayed price is within the filter range
+    ","9670","Scenario 2.1: Price filter 10,000-15,000 RUB - 'Лотос' couch (12,405 RUB) is present in results","tests","Thu Mar 19 19:27:36 UTC 2026","passed","Thu Mar 19 19:27:46 UTC 2026","","test_price_filter","",""
+"
+    Scenario 2.5: Add the first catalog product to the cart and verify
+    the price matches what was shown in the catalog.
+    ","42142","Scenario 2.5: First catalog product can be added to cart with correct price","tests","Thu Mar 19 19:27:16 UTC 2026","passed","Thu Mar 19 19:27:58 UTC 2026","","test_cart","",""
+"
+    Scenario 2.5: Add the first catalog product to the cart and verify
+    the price matches what was shown in the catalog.
+    ","31405","Scenario 2.5: First catalog product can be added to cart with correct price","tests","Thu Mar 19 19:27:05 UTC 2026","passed","Thu Mar 19 19:27:36 UTC 2026","","test_cart","",""
+"
+    Scenario 2.3: Add the first product in the catalog to favorites
+    and verify it appears on the favorites page.
+
+    Postcondition:
+        Removes the product from favorites to restore initial state.
+    ","11687","Scenario 2.3: First catalog product can be added to favorites","tests","Thu Mar 19 19:27:04 UTC 2026","passed","Thu Mar 19 19:27:16 UTC 2026","","test_add_to_favorites","",""
+"
+    Scenario 2.1: Price filter + specific product presence check.
+
+    Verifies the end-to-end filtering flow:
+        - catalog loads successfully
+        - price filter narrows the results
+        - a known product that matches the filter is visible
+        - the product's displayed price is within the filter range
+    ","9716","Scenario 2.1: Price filter 10,000-15,000 RUB - 'Лотос' couch (12,405 RUB) is present in results","tests","Thu Mar 19 19:27:58 UTC 2026","passed","Thu Mar 19 19:28:08 UTC 2026","","test_price_filter","",""
+"Scenario 2.4: Product search by name.","7513","Scenario 2.4: Search for 'Чебурашка' - first result contains the search term","tests","Thu Mar 19 19:28:00 UTC 2026","passed","Thu Mar 19 19:28:07 UTC 2026","","test_search","",""
+"
+    Scenario 2.2: Verify that dimensions shown in the catalog card
+    are consistent with the Characteristics tab on the product detail page.
+    ","13383","Scenario 2.2: 'Шенилл' catalog card dimensions match the Characteristics tab on the product page","tests","Thu Mar 19 19:27:46 UTC 2026","passed","Thu Mar 19 19:28:00 UTC 2026","","test_product_details","",""
+"
+    Scenario 2.3: Add the first product in the catalog to favorites
+    and verify it appears on the favorites page.
+
+    Postcondition:
+        Removes the product from favorites to restore initial state.
+    ","12584","Scenario 2.3: First catalog product can be added to favorites","tests","Thu Mar 19 19:26:52 UTC 2026","passed","Thu Mar 19 19:27:05 UTC 2026","","test_add_to_favorites","",""

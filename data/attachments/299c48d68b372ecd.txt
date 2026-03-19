@@ -1,0 +1,10 @@
+19:27:05  INFO      pages.base_page - Navigating to: https://mebelmart-saratov.ru/myagkaya_mebel_v_saratove/divanyi_v_saratove
+19:27:11  INFO      pages.couches_catalog_page - Couches catalog loaded: https://mebelmart-saratov.ru/myagkaya_mebel_v_saratove/divanyi_v_saratove
+19:27:12  INFO      tests.test_cart - First product: 'Диван Лотос', catalog price: 12405 ₽
+19:27:13  INFO      pages.couches_catalog_page - Clicked product link for 'Диван Лотос'
+19:27:13  INFO      tests.test_cart - Product page: 'Модульный набор для кухни Лотос (Бител)'
+19:27:23  INFO      pages.product_page - Product page fully loaded and interactive
+19:27:33  INFO      pages.product_page - 'В корзину' complete
+19:27:34  INFO      pages.cart_page - Cart page loaded: https://mebelmart-saratov.ru/cart
+19:27:36  INFO      tests.test_cart - Cart items: ['Модульный набор для кухни Лотос (Бител)']
+19:27:36  INFO      tests.test_cart - Catalog: 12405 ₽, cart total: 12405 ₽

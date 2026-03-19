@@ -1,0 +1,5 @@
+INFO     pages.base_page:base_page.py:32 Navigating to: https://mebelmart-saratov.ru/myagkaya_mebel_v_saratove/divanyi_v_saratove
+INFO     pages.couches_catalog_page:couches_catalog_page.py:61 Couches catalog loaded: https://mebelmart-saratov.ru/myagkaya_mebel_v_saratove/divanyi_v_saratove
+INFO     pages.search_results_page:search_results_page.py:49 Search submitted: 'Чебурашка'
+INFO     tests.test_search:test_search.py:65 Search results loaded - heading: 'Поиск «Чебурашка»', summary: 'Показаны записи 1-7 из 7.'
+INFO     tests.test_search:test_search.py:85 First result: 'Диван Чебурашка шенилл (В-д)'

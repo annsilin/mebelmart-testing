@@ -1,0 +1,13 @@
+19:26:50  INFO      conftest - Output directories ready.
+19:26:52  INFO      pages.base_page - Navigating to: https://mebelmart-saratov.ru/myagkaya_mebel_v_saratove/divanyi_v_saratove
+19:26:59  INFO      pages.couches_catalog_page - Couches catalog loaded: https://mebelmart-saratov.ru/myagkaya_mebel_v_saratove/divanyi_v_saratove
+19:26:59  INFO      tests.test_add_to_favorites - Adding to favorites: 'Диван Лотос'
+19:27:00  INFO      pages.couches_catalog_page - Favorite icon clicked for 'Диван Лотос'
+19:27:00  INFO      tests.test_add_to_favorites - Favorite icon is active for 'Диван Лотос'
+19:27:01  INFO      pages.couches_catalog_page - Navigated to favorites via desktop header link
+19:27:01  INFO      tests.test_add_to_favorites - Favorites page loaded: https://mebelmart-saratov.ru/favorite
+19:27:01  INFO      tests.test_add_to_favorites - Looking for model 'Лотос' in favorites: ['Модульный набор для кухни Лотос']
+19:27:01  INFO      pages.base_page - Navigating to: https://mebelmart-saratov.ru/myagkaya_mebel_v_saratove/divanyi_v_saratove
+19:27:03  INFO      pages.couches_catalog_page - Couches catalog loaded: https://mebelmart-saratov.ru/myagkaya_mebel_v_saratove/divanyi_v_saratove
+19:27:05  INFO      pages.couches_catalog_page - Favorite icon clicked for 'Диван Лотос'
+19:27:05  INFO      tests.test_add_to_favorites - 'Диван Лотос' removed from favorites (cleanup)
