@@ -9,7 +9,7 @@ import logging
 import allure
 from playwright.sync_api import Page
 
-from config.config import DEFAULT_TIMEOUT
+from config.config import DEFAULT_TIMEOUT, HEADLESS
 
 logger = logging.getLogger(__name__)
 
@@ -77,5 +77,7 @@ class BasePage:
             locator.first.evaluate(
                 "el => el.scrollIntoView({ behavior: 'smooth', block: 'center' })"
             )
+            if not HEADLESS:
+                self.page.wait_for_timeout(2500)
         except Exception as exc:
             logger.debug("scroll_to_center() skipped: %s", exc)

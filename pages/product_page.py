@@ -62,11 +62,13 @@ class ProductPage(BasePage):
         """Click the characteristics tab and wait for its panel to become visible."""
         tab = self.page.locator(self.CHARACTERISTICS_TAB)
         tab.wait_for(timeout=10_000)
+        self.scroll_to_center(tab)
         tab.click()
         # Wait for the panel to become visible after the Bootstrap transition
         self.page.locator(self.CHARACTERISTICS_PANEL).wait_for(
             state="visible", timeout=10_000
         )
+        self.page.wait_for_timeout(2000)
         logger.debug("Characteristics tab opened")
 
     @allure.step("Read characteristics table")
@@ -121,31 +123,6 @@ class ProductPage(BasePage):
     SELECT_BTN = ".select-block .select__btn"
     OPTION_LIST_ITEM = ".select-block .select .optionList .optionList__item"
 
-    def select_first_available_options(self) -> None:
-        """
-        Select the first option in every product configurator dropdown.
-        If no configurator dropdowns are present the method exits silently.
-        """
-        select_btns = self.page.locator(self.SELECT_BTN).all()
-        if not select_btns:
-            logger.debug("No option dropdowns found - skipping option selection")
-            return
-
-        logger.info("Selecting first option in %d dropdown(s)", len(select_btns))
-        # The optionList items are hidden by CSS until the dropdown is opened.
-        # We use JS to click them directly, bypassing Playwright's visibility check.
-        self.page.evaluate("""
-                           () => {
-                               document.querySelectorAll('.select-block .select').forEach(select => {
-                                   const firstItem = select.querySelector('.optionList .optionList__item');
-                                   if (firstItem) {
-                                       firstItem.click();
-                                   }
-                               });
-                           }
-                           """)
-        self.page.wait_for_timeout(500)
-        logger.info("Options selected via JS")
 
     @allure.step("Wait for product page to fully load")
     def wait_for_page_ready(self) -> None:
@@ -162,13 +139,10 @@ class ProductPage(BasePage):
 
         self.wait_for_page_ready()
 
-        # Select all required product options first (color, etc.)
-        self.select_first_available_options()
-
         # Use .first - the page has a second hidden .btnToCart inside the
         # quick-order modal, which causes a strict mode violation otherwise.
         btn = self.page.locator(self.ADD_TO_CART_BTN).first
-        btn.scroll_into_view_if_needed()
+        self.scroll_to_center(btn)
 
         # Wait for the button to be fully enabled before clicking
         btn.wait_for(state="visible", timeout=10_000)

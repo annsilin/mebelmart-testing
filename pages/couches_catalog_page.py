@@ -87,6 +87,7 @@ class CouchesCatalogPage(BasePage):
             "([min, max]) => { $('#w0').slider('setValue', [Number(min), Number(max)], true, true); }",
             [price_from, price_to],
         )
+        self.page.wait_for_timeout(2000)
         logger.info("Price slider set: %d – %d RUB", price_from, price_to)
         return self
 
@@ -153,6 +154,7 @@ class CouchesCatalogPage(BasePage):
         )
         try:
             locator.first.wait_for(timeout=10_000)
+            self.scroll_to_center(locator)
             return locator.first
         except Exception:
             return None
@@ -262,31 +264,6 @@ class CouchesCatalogPage(BasePage):
         except Exception as exc:
             logger.warning("Could not read catalog card dimensions for '%s': %s", product_name, exc)
             return {}
-
-    # def get_product_link_by_name(self, product_name: str) -> str | None:
-    #     """
-    #     Return the href of the product detail link for the named catalog card.
-    #
-    #     Args:
-    #         product_name: Partial or full product name.
-    #
-    #     Returns:
-    #         Absolute URL string, or None if not found.
-    #     """
-    #     locator = self.page.locator(
-    #         f"xpath=//div[contains(@class,'product-card__name')]"
-    #         f"//a[contains(., '{product_name}')]"
-    #     )
-    #     try:
-    #         locator.first.wait_for(timeout=10_000)
-    #         href = locator.first.get_attribute("href")
-    #         if href and href.startswith("/"):
-    #             from config.config import BASE_URL
-    #             href = BASE_URL + href
-    #         return href
-    #     except Exception as exc:
-    #         logger.warning("Product link not found for '%s': %s", product_name, exc)
-    #         return None
 
     def get_first_product_name(self) -> str | None:
         """

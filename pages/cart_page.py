@@ -53,6 +53,7 @@ class CartPage(BasePage):
         try:
             self.page.locator(self.CART_WIDGET).wait_for()
             self.page.locator(self.CART_ITEM).first.wait_for(timeout=15_000)
+            self.page.wait_for_timeout(2000)
             return True
         except Exception:
             return False

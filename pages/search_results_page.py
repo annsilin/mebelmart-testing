@@ -44,6 +44,7 @@ class SearchResultsPage(BasePage):
         input_el = self.page.locator(self.SEARCH_INPUT)
         input_el.wait_for(state="visible", timeout=10_000)
         input_el.fill(query)
+        self.scroll_to_center(input_el)
         input_el.press("Enter")
         logger.info("Search submitted: '%s'", query)
         self._wait_for_results()
